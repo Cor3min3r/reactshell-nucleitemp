@@ -1,0 +1,46 @@
+id: nextjs-internal-error-detector
+info:
+  name: Detect Internal Server Error triggered by malformed multipart request
+  author: your-name
+  severity: critical
+  description: |
+    Sends a crafted multipart/form-data POST request that triggers a 500 Internal
+    Server Error in certain Next.js servers, based on observed behavior.
+
+http:
+  - method: POST
+    path:
+      - "{{BaseURL}}/"
+
+    headers:
+      Cache-Control: "max-age=0"
+      Sec-Ch-Ua: "\"Google Chrome\";v=\"143\", \"Not=A?Brand\";v=\"8\", \"Chromium\";v=\"143\""
+      Sec-Ch-Ua-Mobile: "?0"
+      Sec-Ch-Ua-Platform: "\"macOS\""
+      Accept-Language: "en-US;q=0.9,en;q=0.8"
+      User-Agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+      Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+      Sec-Fetch-Site: "none"
+      Sec-Fetch-Mode: "navigate"
+      Sec-Fetch-User: "?1"
+      Sec-Fetch-Dest: "document"
+      Content-Type: "multipart/form-data; boundary=ut3g8ojbf5my02m9"
+      Next-Action: "bcr351h10fzo2243nxthgttztft9v11c"
+      Next-Router-State-Tree: "[\"\"]"
+      X-Nextjs-Request-Id: "c83be305-65a0-40f1-9e9e-389d3799711b"
+
+    body: |
+      --ut3g8ojbf5my02m9
+      Content-Disposition: form-data; name="1"
+
+      {}
+      --ut3g8ojbf5my02m9
+      Content-Disposition: form-data; name="0"
+
+      ["$1:a:a"]
+      --ut3g8ojbf5my02m9--
+
+    matchers:
+      - type: status
+        status:
+          - 500
